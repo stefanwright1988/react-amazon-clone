@@ -3,9 +3,15 @@ import { Link } from "react-router-dom";
 import SearchIcon from "@material-ui/icons/Search";
 import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
 import { useStateValue } from "../state/StateProvider";
+import { firebaseAuth } from "../firebase";
 
 function Header() {
-  const [{ basket }, dispatch] = useStateValue();
+  const [{ basket, user }, dispatch] = useStateValue();
+  const handleAuth = () => {
+    if (user) {
+      firebaseAuth.signOut();
+    }
+  };
   return (
     <div className="h-16 flex items-center align-center bg-amazonGrey sticky top-0 z-30">
       <Link to="/">
@@ -30,14 +36,20 @@ function Header() {
         />
       </div>
       <div id="headerNav" className="flex justify-evenly">
-        <div id="headerName_SignIn" className="flex flex-col mx-4 text-white">
-          <span id="headerName_SignIn_L1" className="text-xs">
-            Hello Guest
-          </span>
-          <span id="headerName_SignIn_L2" className="text-lg font-bold">
-            Sign In
-          </span>
-        </div>
+        <Link to={!user && "/signIn"}>
+          <div
+            id="headerName_SignIn"
+            onClick={handleAuth}
+            className="flex flex-col mx-4 text-white"
+          >
+            <span id="headerName_SignIn_L1" className="text-xs">
+              Hello {user ? user.email : `Guest`}
+            </span>
+            <span id="headerName_SignIn_L2" className="text-lg font-bold">
+              {user ? `Sign Out` : `Sign In`}
+            </span>
+          </div>
+        </Link>
         <div id="headerName_Orders" className="flex flex-col mx-4 text-white">
           <span id="headerName_Orders_L1" className="text-xs">
             Returns
