@@ -50,14 +50,16 @@ function Header() {
             </span>
           </div>
         </Link>
-        <div id="headerName_Orders" className="flex flex-col mx-4 text-white">
-          <span id="headerName_Orders_L1" className="text-xs">
-            Returns
-          </span>
-          <span id="headerName_Orders_L2" className="text-lg font-bold">
-            & Orders
-          </span>
-        </div>
+        <Link to="/orders">
+          <div id="headerName_Orders" className="flex flex-col mx-4 text-white">
+            <span id="headerName_Orders_L1" className="text-xs">
+              Returns
+            </span>
+            <span id="headerName_Orders_L2" className="text-lg font-bold">
+              & Orders
+            </span>
+          </div>
+        </Link>
         <div id="headerName_Prime" className="flex flex-col mx-4 text-white">
           <span id="headerName_Prime_L1" className="text-xs">
             Your
@@ -70,7 +72,7 @@ function Header() {
           id="headerName_Basket"
           className="flex items-center mx-4 text-white"
         >
-          <Link to="/checkout">
+          <Link to="/basket">
             <ShoppingBasketIcon className="mx-2" />
             <span id="headerName_Basket_Count" className="text-lg font-bold">
               {basket?.length}

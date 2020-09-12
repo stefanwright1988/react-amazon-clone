@@ -3,12 +3,14 @@ import CurrencyFormat from "react-currency-format";
 import Button from "@material-ui/core/Button";
 import { useStateValue } from "../state/StateProvider";
 import { getBasketTotal } from "../state/reducer";
+import { useHistory } from "react-router-dom";
 
 function Subtotal() {
+  const history = useHistory();
   const [{ basket }, dispatch] = useStateValue();
   return (
     <div
-      id="checkoutSubtotal"
+      id="basketSubtotal"
       className="bg-gray-200 flex flex-col justify-between p-4 rounded w-64"
     >
       <CurrencyFormat
@@ -30,7 +32,12 @@ function Subtotal() {
         thousandSeparator={true}
         prefix={"£"}
       />
-      <Button variant="contained" size="small" className="">
+      <Button
+        variant="contained"
+        size="small"
+        className=""
+        onClick={(e) => history.push("/checkout")}
+      >
         Proceed to checkout
       </Button>
     </div>
