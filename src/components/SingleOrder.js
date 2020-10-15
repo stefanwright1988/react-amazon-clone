@@ -15,12 +15,12 @@ function SingleOrder({ order }) {
       <p>{moment.unix(order.data.create).format("Do MMMM YYYY, h:mma")}</p>
       {order.data.basket?.map((item) => (
         <BasketProduct
+          hidebutton={true}
           id={item.id}
-          title={item.title}
           image={item.image}
           price={item.price}
           rating={item.rating}
-          hidebutton={true}
+          title={item.title}
         />
       ))}
       <CurrencyFormat

@@ -3,7 +3,7 @@ import Subtotal from "./Subtotal";
 import BasketProduct from "./BasketProduct";
 import { useStateValue } from "../state/StateProvider";
 
-function Basket() {
+const Basket = () => {
   const [{ basket, user }, dispatch] = useStateValue();
   return (
     <div id="basket" className="flex p-4 h-full bg-white">
@@ -19,15 +19,19 @@ function Basket() {
           <h2 id="basketTitle" className="mr-2 p-2 border-gray-700 border-b-2">
             Your Shopping Basket
           </h2>
-          {basket.map((item) => (
-            <BasketProduct
-              id={item.id}
-              title={item.title}
-              image={item.image}
-              price={item.price}
-              rating={item.rating}
-            />
-          ))}
+          {basket.length ? (
+            basket.map((item) => (
+              <BasketProduct
+                id={item.id}
+                image={item.image}
+                price={item.price}
+                rating={item.rating}
+                title={item.title}
+              />
+            ))
+          ) : (
+            <h1>Basket is empty</h1>
+          )}
         </div>
       </div>
       <div id="basketRight" className="">
@@ -35,6 +39,6 @@ function Basket() {
       </div>
     </div>
   );
-}
+};
 
 export default Basket;

@@ -4,12 +4,12 @@ import Button from "@material-ui/core/Button";
 import { useStateValue } from "../state/StateProvider";
 
 function BasketProduct({
+  hidebutton = false,
   id,
   image,
-  title,
   price,
   rating,
-  hidebutton = false,
+  title,
 }) {
   const [{ basket }, dispatch] = useStateValue();
   const removeFromBasket = () =>

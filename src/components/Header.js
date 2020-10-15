@@ -9,21 +9,23 @@ function Header() {
   const [{ basket, user }, dispatch] = useStateValue();
   const handleAuth = () => {
     if (user) {
+      localStorage.removeItem(`basket`);
       firebaseAuth.signOut();
+      dispatch({ type: "EMPTY_BASKET" });
     }
   };
   return (
-    <div className="h-16 flex items-center align-center bg-amazonGrey sticky top-0 z-30">
+    <div className="align-center bg-amazonGrey flex flex-col h-auto items-center md:flex-row sticky top-0 z-30">
       <Link to="/">
         <img
           src="/amazonlogo.png"
-          className="mt-1 mx-20 object-contain w-40"
+          className="mt-1 mx-20 object-contain w-40 p-4"
           alt="Logo"
         />
       </Link>
       <div
         id="headerSearch"
-        className="flex items-center flex-1 rounded-tl rounded-bl"
+        className="flex items-center flex-1 rounded-tl rounded-bl w-full p-2"
       >
         <input
           type="search"
@@ -36,7 +38,7 @@ function Header() {
         />
       </div>
       <div id="headerNav" className="flex justify-evenly">
-        <Link to={!user && "/signIn"}>
+        <Link to={(!user || user === "non-user") && "/signIn"}>
           <div
             id="headerName_SignIn"
             onClick={handleAuth}
@@ -46,7 +48,7 @@ function Header() {
               Hello {user ? user.email : `Guest`}
             </span>
             <span id="headerName_SignIn_L2" className="text-lg font-bold">
-              {user ? `Sign Out` : `Sign In`}
+              {user && user !== "non-user" ? `Sign Out` : `Sign In`}
             </span>
           </div>
         </Link>
@@ -70,7 +72,7 @@ function Header() {
         </div>
         <div
           id="headerName_Basket"
-          className="flex items-center mx-4 text-white"
+          className="flex items-center mx-4 text-white text-center"
         >
           <Link to="/basket">
             <ShoppingBasketIcon className="mx-2" />

@@ -1,76 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useStateValue } from "../state/StateProvider";
 import BasketProduct from "./BasketProduct";
 import { Link, useHistory } from "react-router-dom";
-import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import CurrencyFormat from "react-currency-format";
-import { getBasketTotal } from "../state/reducer";
-import Button from "@material-ui/core/Button";
-import axios from "../axios";
-import { firebaseDb } from "../firebase";
+import StripeCheckout from "./StripeContainer";
 
 function Checkout() {
   const history = useHistory();
   const [{ basket, user }, dispatch] = useStateValue();
-
-  const stripe = useStripe();
-  const elements = useElements();
-
-  const [error, setError] = useState(null);
-  const [disabled, setDisabled] = useState(true);
-  const [succeeded, setSucceeded] = useState(false);
-  const [processing, setProcessing] = useState("");
-  const [clientSecret, setClientSecret] = useState(true);
-
-  useEffect(() => {
-    const getClientSecret = async () => {
-      const response = await axios({
-        method: "post",
-        url: `/payments/create?total=${getBasketTotal(basket) * 100}`,
-      });
-      setClientSecret(response.data.clientSecret);
-    };
-    getClientSecret();
-  }, [basket]);
-
-  console.log("The secret is >>> ", clientSecret);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setProcessing(true);
-    const payload = await stripe
-      .confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        },
-      })
-      .then(({ paymentIntent }) => {
-        firebaseDb
-          .collection("users")
-          .doc(user?.uid)
-          .collection("orders")
-          .doc(paymentIntent.id)
-          .set({
-            basket: basket,
-            amount: paymentIntent.amount,
-            create: paymentIntent.created,
-          });
-        setSucceeded(true);
-        setError(null);
-        setProcessing(false);
-        dispatch({
-          action: "EMPTY_BASKET",
-        });
-        history.replace("/orders");
-      });
-  };
-  const handleChange = (e) => {
-    setDisabled(e.empty);
-    if (e.complete) {
-      document.getElementById("paymentButton").classList.remove("Mui-disabled");
-    }
-    setError(e.error ? e.error.message : "");
-  };
   return (
     <div className="bg-white" id="checkout">
       <div id="checkout_Container" className="">
@@ -111,10 +47,10 @@ function Checkout() {
             {basket.map((item) => (
               <BasketProduct
                 id={item.id}
-                title={item.title}
                 image={item.image}
                 price={item.price}
                 rating={item.rating}
+                title={item.title}
               />
             ))}
           </div>
@@ -129,28 +65,7 @@ function Checkout() {
             </h3>
           </div>
           <div id="checkout_PaymentSectionDetails" className="w-2/5">
-            <form onSubmit={handleSubmit}>
-              <CardElement onChange={handleChange} />
-              <div id="checkout_PaymentSectionPrice">
-                <CurrencyFormat
-                  renderText={(value) => <h3>Order total: {value}</h3>}
-                  decimalScale={2}
-                  value={getBasketTotal(basket)}
-                  displayType={"text"}
-                  thousandSeparator={true}
-                  prefix={"£"}
-                />
-              </div>
-              <Button
-                id="paymentButton"
-                type="submit"
-                disabled={processing || disabled || succeeded}
-                style={{ backgroundColor: "lightgreen" }}
-              >
-                <span>{processing ? `Processing` : `Pay Now`}</span>
-              </Button>
-              {error && <div>{error}</div>}
-            </form>
+            <StripeCheckout basket={basket} history={history} />
           </div>
         </div>
       </div>

@@ -35,10 +35,11 @@ function Subtotal() {
       <Button
         variant="contained"
         size="small"
+        disabled={basket.length === 0}
         className=""
         onClick={(e) => history.push("/checkout")}
       >
-        Proceed to checkout
+        {basket.length > 0 ? "Proceed to checkout" : "No items in basket"}
       </Button>
     </div>
   );

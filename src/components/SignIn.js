@@ -3,29 +3,38 @@ import { Link, useHistory } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { firebaseAuth } from "../firebase";
 
-function SignIn() {
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signinToggle, setSigninToggle] = useState(true);
   const history = useHistory();
-  const signIn = (e) => {
+  const signInHandler = (e) => {
     e.preventDefault();
-    firebaseAuth
-      .signInWithEmailAndPassword(email, password)
-      .then((auth) => {
-        history.push("/");
-      })
-      .catch((error) => alert(error));
-  };
-  const signUp = (e) => {
-    e.preventDefault();
-    firebaseAuth
-      .createUserWithEmailAndPassword(email, password)
-      .then((auth) => {
-        if (auth) {
+    if (!signinToggle) {
+      setSigninToggle(true);
+    } else {
+      firebaseAuth
+        .signInWithEmailAndPassword(email, password)
+        .then((auth) => {
           history.push("/");
-        }
-      })
-      .catch((error) => alert(error.message));
+        })
+        .catch((error) => alert(error));
+    }
+  };
+  const signUpHandler = (e) => {
+    e.preventDefault();
+    if (signinToggle) {
+      setSigninToggle(false);
+    } else {
+      firebaseAuth
+        .createUserWithEmailAndPassword(email, password)
+        .then((auth) => {
+          if (auth) {
+            history.push("/");
+          }
+        })
+        .catch((error) => alert(`SignUp: ${error.message}`));
+    }
   };
   return (
     <div id="signIn" className="flex flex-col items-center h-screen bg-white">
@@ -36,8 +45,11 @@ function SignIn() {
           className="object-contain m-4 w-56 mx-auto my-8"
         />
       </Link>
-      <div className="rounded border-black border-2 p-12" id="signIn_Form">
-        <h1 className="text-center">Sign-In</h1>
+      <div
+        className="border-2 border-black pb-12 pt-4 px-12 rounded-lg"
+        id="signIn_Form"
+      >
+        <h1 className="text-center">{signinToggle ? `Sign-In` : `Sign-Up`}</h1>
         <form>
           <h5 className="my-1">E-mail</h5>
           <input
@@ -57,9 +69,9 @@ function SignIn() {
             variant="contained"
             style={{ backgroundColor: "lightgreen" }}
             className="w-full"
-            onClick={signIn}
+            onClick={signinToggle ? signInHandler : signUpHandler}
           >
-            Sign In to FAKE Amazon
+            Sign {signinToggle ? `In` : `Up`} to FAKE Amazon
           </Button>
         </form>
         <p className="my-4">
@@ -70,13 +82,13 @@ function SignIn() {
           variant="contained"
           style={{ backgroundColor: "lightgreen" }}
           className="w-full"
-          onClick={signUp}
+          onClick={signinToggle ? signUpHandler : signInHandler}
         >
-          Create an account on FAKE Amazon
+          {signinToggle ? `Create an account on` : `Sign In to`} FAKE Amazon
         </Button>
       </div>
     </div>
   );
-}
+};
 
 export default SignIn;

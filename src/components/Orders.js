@@ -11,9 +11,9 @@ function Orders() {
   useEffect(() => {
     if (user) {
       firebaseDb
-        .collection("users")
+        .collection("users_collection")
         .doc(user?.uid)
-        .collection("orders")
+        .collection("orders_collection")
         .orderBy("create", "desc")
         .onSnapshot((snapshot) =>
           setOrders(
@@ -31,9 +31,9 @@ function Orders() {
     <div id="orders" className="py-4 px-8">
       <h1>Your Orders</h1>
       <div>
-        {orders?.map((order) => (
-          <SingleOrder order={order} />
-        ))}
+        {orders.length
+          ? orders?.map((order) => <SingleOrder order={order} />)
+          : "You have no orders"}
       </div>
     </div>
   );
